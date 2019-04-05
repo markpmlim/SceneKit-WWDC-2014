@@ -6,7 +6,7 @@ This project is a Swift 3.0 port of the above demo and is developed with XCode 8
 The rendering of some slides might cause the demo to crash if this port is run on a computer with a macOS version which uses Metal as its default renderingAPI. 
 
 
-Note: the renderingAPI is set to OpenGL by adding a key named "PrefersOpenGL"ù to the demo's info.plist.
+Note: the renderingAPI is set to OpenGL by adding a key named "PrefersOpenGL" to the demo's info.plist.
 
 
 The compiled program will run without problems on macOS 10.10.x (Yosemite).

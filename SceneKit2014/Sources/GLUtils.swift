@@ -28,8 +28,6 @@ class GLUtils {
             return false
         }
 
-        //var contents = (source! as NSString).cString(using: String.Encoding.ascii.rawValue)
-        //var shaderStringLength = GLint((source! as NSString).length)
         let contents = source!.cString(using: String.Encoding.ascii)    // [CChar]?
         var shaderStringLength = GLint(source!.lengthOfBytes(using: String.Encoding.ascii))
 
@@ -44,7 +42,8 @@ class GLUtils {
             var length: GLsizei = 0
             var logs = [GLchar](repeating: 0x00, count:1000)
             glGetShaderInfoLog(shader, 1000, &length, &logs)
-            print("gl Compile Status: %s", logs)
+            let errMsg = String(utf8String: logs)
+            print("gl Compile Status: %s", errMsg!)
             glDeleteShader(shader);
             return false
         }
@@ -61,7 +60,8 @@ class GLUtils {
             var length: GLsizei = 0
             var logs = [GLchar](repeating: 0x00, count:1000)
             glGetShaderInfoLog(prog, 1000, &length, &logs)
-            print("gl Link Status: %s", logs)
+            let errMsg = String(utf8String: logs)
+            print("gl Link Status: %s", errMsg!)
             return false
         }
         return true

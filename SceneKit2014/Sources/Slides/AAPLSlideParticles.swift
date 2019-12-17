@@ -387,11 +387,10 @@ class AAPLSlideParticles: APPLSlide {
                         // dataStride[i] is an Int
                         // indices[i] is a UInt32
                         for i in 0..<count {
-                            let rawPtr = data[0]
-                            let ptr = rawPtr.assumingMemoryBound(to: Float.self)
-                            let col = ptr + dataStride[0] * i
+                            let rawPtr = data[0] + dataStride[0] * i
+                            let col = rawPtr.bindMemory(to: Float.self, capacity: 2)
                             if (arc4random() & UInt32(0x1)) == 1 {
-                                col[0] = col[1] // switch green for red
+                                col[0] = col[1] // Switch the green and red color components.
                                 col[1] = 0
                             }
                         }
@@ -400,16 +399,17 @@ class AAPLSlideParticles: APPLSlide {
                     ps.handle(.collision,
                               forProperties: [.angle, .rotationAxis, .angularVelocity, .velocity, .contactNormal],
                               handler: {
+                        //(UnsafeMutablePointer<UnsafeMutableRawPointer>, UnsafeMutablePointer<Int>, UnsafeMutablePointer<UInt32>?, Int) -> Swift.Void
                         (data, dataStride, indices, count) -> Void in
                         for i in 0..<count {
-                            // use alternative
-                            let opaquePtr0 = OpaquePointer(data[0])     // convert UnsafeMutableRawPointer to OpaquePointer
-                            let opaquePtr1 = OpaquePointer(data[1])
+                            // i is the index of the i-th particle.
+                            let rawPtr0 = data[0] + dataStride[0] * Int((indices?[i])!)
+                            let rawPtr1 = data[1] + dataStride[1] * Int((indices?[i])!)
                             // fix orientation
-                            let angle = UnsafeMutablePointer<Float>(opaquePtr0) + dataStride[0] * Int((indices?[i])!)
-                            let axis = UnsafeMutablePointer<Float>(opaquePtr1) + dataStride[1] * Int((indices?[i])!)
-                            let opaquePtr4 = OpaquePointer(data[4])
-                            let colNrm = UnsafeMutablePointer<Float>(opaquePtr4) + dataStride[4] * Int((indices?[i])!)
+                            let angle = rawPtr0.assumingMemoryBound(to: Float.self)
+                            let axis = rawPtr1.bindMemory(to: Float.self, capacity: 3)
+                            let rawPtr4 = data[4] + dataStride[4] * Int((indices?[i])!)
+                            let colNrm = rawPtr4.bindMemory(to: Float.self, capacity: 3)
                             let collisionNormal = SCNVector3(x: CGFloat(colNrm[0]),
                                                              y: CGFloat(colNrm[1]),
                                                              z: CGFloat(colNrm[2]))
@@ -420,14 +420,14 @@ class AAPLSlideParticles: APPLSlide {
                             axis[0] = Float(cp.x) / Float(cpLen)
                             axis[1] = Float(cp.y) / Float(cpLen)
                             axis[2] = Float(cp.z) / Float(cpLen)
-                            // kill angular rotation
-                            let opaquePtr2 = OpaquePointer(data[2])
-                            let angVel = UnsafeMutablePointer<Float>(opaquePtr2) + dataStride[2] * Int((indices?[i])!)
+                            // kill the angular rotation
+                            let rawPtr2 = data[2] + dataStride[2] * Int((indices?[i])!)
+                            let angVel = rawPtr2.assumingMemoryBound(to: Float.self)
                             angVel[0] = 0
 
                             if (colNrm[1] > 0.4) {
-                                let opaquePtr3 = OpaquePointer(data[3])
-                                let vel = UnsafeMutablePointer<Float>(opaquePtr3) + dataStride[3] * Int((indices?[i])!)
+                                let rawPtr = data[3] + dataStride[3] * Int((indices?[i])!)
+                                let vel = rawPtr.bindMemory(to: Float.self, capacity: 3)
                                 vel[0] = 0
                                 vel[1] = 0
                                 vel[2] = 0

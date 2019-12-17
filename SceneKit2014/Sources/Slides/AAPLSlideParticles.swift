@@ -83,10 +83,8 @@ class AAPLSlideParticles: APPLSlide {
 
             self.groundNode.addChildNode(_hole)
             SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.5
-
-            _hole.scale = SCNVector3Make(1,1,1)
-
+                SCNTransaction.animationDuration = 0.5
+                _hole.scale = SCNVector3Make(1,1,1)
             SCNTransaction.commit()
 
             let ps = SCNParticleSystem(named: "fire",
@@ -98,6 +96,7 @@ class AAPLSlideParticles: APPLSlide {
         case ParticleSteps.fireScreen.rawValue:
             let ps = hole?.particleSystems?[0]
             ps?.blendMode = .screen
+
         case ParticleSteps.local.rawValue:
             self.textManager.flipOutText(ofTextType: .bullet)
 
@@ -111,8 +110,8 @@ class AAPLSlideParticles: APPLSlide {
             hole2?.position = SCNVector3Make(0, -2, CGFloat(HOLE_Z-4))
             self.groundNode.addChildNode(hole2!)
             SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.5
-            hole2?.position = SCNVector3Make(0, 0, CGFloat(HOLE_Z-4))
+                SCNTransaction.animationDuration = 0.5
+                hole2?.position = SCNVector3Make(0, 0, CGFloat(HOLE_Z-4))
             SCNTransaction.commit()
 
             let ps = SCNParticleSystem(named: "smoke",
@@ -150,51 +149,52 @@ class AAPLSlideParticles: APPLSlide {
                                         forKey: "animateHole")
                 }
             }
+
         case ParticleSteps.gravity.rawValue:
             do {
-                    self.textManager.flipOutText(ofTextType: .bullet)
+                self.textManager.flipOutText(ofTextType: .bullet)
 
-                    _ = self.textManager.add(bullet: "Affected by gravity",
-                                             at : 0)
-                    self.textManager.flipInText(ofTextType: .bullet)
+                _ = self.textManager.add(bullet: "Affected by gravity",
+                                         at : 0)
+                self.textManager.flipInText(ofTextType: .bullet)
 
-                    hole2?.removeAllParticleSystems()
-                    hole2?.runAction(SCNAction.sequence([SCNAction.scale(to: 0,
-                                                                         duration: 0.5),
-                                                         SCNAction.removeFromParentNode()]))
-                    hole?.removeAllParticleSystems()
-                    hole?.removeAnimation(forKey: "animateHole",
-                                          fadeOutDuration: 0.5)
+                hole2?.removeAllParticleSystems()
+                hole2?.runAction(SCNAction.sequence([SCNAction.scale(to: 0,
+                                                                     duration: 0.5),
+                                                     SCNAction.removeFromParentNode()]))
+                hole?.removeAllParticleSystems()
+                hole?.removeAnimation(forKey: "animateHole",
+                                      fadeOutDuration: 0.5)
 
-                    SCNTransaction.begin()
-                    SCNTransaction.animationDuration = 0.5
+                SCNTransaction.begin()
+                SCNTransaction.animationDuration = 0.5
 
-                    let tube = hole?.geometry as! SCNTube
-                    tube.innerRadius = 0.3
-                    tube.outerRadius = 0.4
-                    tube.height = 1.0
+                let tube = hole?.geometry as! SCNTube
+                tube.innerRadius = 0.3
+                tube.outerRadius = 0.4
+                tube.height = 1.0
 
-                    SCNTransaction.commit()
+                SCNTransaction.commit()
 
 
 
-                    let ps = SCNParticleSystem(named: "sparks",
-                                               inDirectory: nil)
-                    hole?.removeAllParticleSystems()
-                    hole?.addParticleSystem(ps!)
-                    // returning nil?
-                    let floorNodes = presentationViewController.presentationView.scene?.rootNode.childNodes(passingTest: {
-                        (child, stop) -> Bool in
-                        if (child.geometry?.isKind(of: SCNFloor.self)) != nil {
-                            return true
-                        }
-                        else {
-                            return false
-                        }
-                    })
-                    floorNode = floorNodes?[0]
-                    ps?.colliderNodes = [floorNode!]
-                }
+                let ps = SCNParticleSystem(named: "sparks",
+                                           inDirectory: nil)
+                hole?.removeAllParticleSystems()
+                hole?.addParticleSystem(ps!)
+                // returning nil?
+                let floorNodes = presentationViewController.presentationView.scene?.rootNode.childNodes(passingTest: {
+                    (child, stop) -> Bool in
+                    if (child.geometry?.isKind(of: SCNFloor.self)) != nil {
+                        return true
+                    }
+                    else {
+                        return false
+                    }
+                })
+                floorNode = floorNodes?[0]
+                ps?.colliderNodes = [floorNode!]
+            }
 
         case ParticleSteps.collider.rawValue:
             do {
@@ -233,6 +233,7 @@ class AAPLSlideParticles: APPLSlide {
 
                 boxNode = _boxNode
             }
+ 
         case ParticleSteps.fields.rawValue:
             do  {
                 hole?.removeAllParticleSystems()
@@ -281,6 +282,7 @@ class AAPLSlideParticles: APPLSlide {
 
                 ps?.colliderNodes = [floorNode!]
             }
+ 
         case ParticleSteps.fieldsVortex.rawValue:
             do {
                 vortexFieldOwner = SCNNode()
@@ -299,18 +301,19 @@ class AAPLSlideParticles: APPLSlide {
 
                 let vortex = SCNPhysicsField.customField(evaluationBlock: {
                     (position, velocity, mass, charge, time) -> SCNVector3 in
-                        var l = SCNVector3Zero
-                        l.x = _worldOrigin.x - position.x
-                        l.z = _worldOrigin.z - position.z
-                        let t = _worldAxis.cross(l)
-                        let d2 = (l.x*l.x + l.z*l.z);
-                        let vs =  CGFloat(VS) / sqrt(d2)
-                        let fy = 1.0 - (min(1.0, (position.y / 15.0)))
-                        return SCNVector3Make(t.x * vs + l.x * CGFloat(VW) * fy, 0, t.z * vs + l.z * CGFloat(VW) * fy)
+                    var l = SCNVector3Zero
+                    l.x = _worldOrigin.x - position.x
+                    l.z = _worldOrigin.z - position.z
+                    let t = _worldAxis.cross(l)
+                    let d2 = (l.x*l.x + l.z*l.z);
+                    let vs =  CGFloat(VS) / sqrt(d2)
+                    let fy = 1.0 - (min(1.0, (position.y / 15.0)))
+                    return SCNVector3Make(t.x * vs + l.x * CGFloat(VW) * fy, 0, t.z * vs + l.z * CGFloat(VW) * fy)
                 })
                 vortex.halfExtent = SCNVector3Make(100, 100, 100);
                 vortexFieldOwner?.physicsField = vortex
             }
+ 
         case ParticleSteps.subSystems.rawValue:
             fieldOwner?.removeFromParentNode()
             particleHolder?.removeAllParticleSystems()
@@ -332,6 +335,7 @@ class AAPLSlideParticles: APPLSlide {
 
             particleHolder?.addParticleSystem(ps!)
             ps?.colliderNodes = [floorNode!]
+
         case ParticleSteps.confetti.rawValue:
             // working but program will crash since memory is modified
             do {
@@ -388,10 +392,11 @@ class AAPLSlideParticles: APPLSlide {
                         // indices[i] is a UInt32
                         for i in 0..<count {
                             let rawPtr = data[0] + dataStride[0] * i
-                            let col = rawPtr.bindMemory(to: Float.self, capacity: 2)
+                            let colorPtr = rawPtr.bindMemory(to: Float.self, capacity: dataStride[0])
+                            let colorBuffer = UnsafeMutableBufferPointer(start: colorPtr, count: dataStride[0])
                             if (arc4random() & UInt32(0x1)) == 1 {
-                                col[0] = col[1] // Switch the green and red color components.
-                                col[1] = 0
+                                colorBuffer[0] = colorBuffer[1] // Switch the green and red color components.
+                                colorBuffer[1] = 0
                             }
                         }
 
@@ -403,34 +408,42 @@ class AAPLSlideParticles: APPLSlide {
                         (data, dataStride, indices, count) -> Void in
                         for i in 0..<count {
                             // i is the index of the i-th particle.
-                            let rawPtr0 = data[0] + dataStride[0] * Int((indices?[i])!)
-                            let rawPtr1 = data[1] + dataStride[1] * Int((indices?[i])!)
+                            let rawPtr0 = data[0] + dataStride[0] * Int(indices![i])
+                            let rawPtr1 = data[1] + dataStride[1] * Int(indices![i])
                             // fix orientation
-                            let angle = rawPtr0.assumingMemoryBound(to: Float.self)
-                            let axis = rawPtr1.bindMemory(to: Float.self, capacity: 3)
-                            let rawPtr4 = data[4] + dataStride[4] * Int((indices?[i])!)
-                            let colNrm = rawPtr4.bindMemory(to: Float.self, capacity: 3)
-                            let collisionNormal = SCNVector3(x: CGFloat(colNrm[0]),
-                                                             y: CGFloat(colNrm[1]),
-                                                             z: CGFloat(colNrm[2]))
+                            let anglePtr = rawPtr0.bindMemory(to: Float.self, capacity: dataStride[0])
+                            let angleBuffer = UnsafeMutableBufferPointer(start: anglePtr, count: dataStride[0])
+                            let rotationAxisPtr = rawPtr1.bindMemory(to: Float.self, capacity: dataStride[1])
+                            let rotationAxisBuffer = UnsafeMutableBufferPointer(start: rotationAxisPtr, count: dataStride[1])
+
+                            let rawPtr4 = data[4] + dataStride[4] * Int(indices![i])
+                            let contactNormalPtr = rawPtr4.bindMemory(to: Float.self, capacity: dataStride[4])
+                            let contactNormalBuffer = UnsafeMutableBufferPointer(start: contactNormalPtr, count: dataStride[4])
+
+                            let collisionNormal = SCNVector3(x: CGFloat(contactNormalBuffer[0]),
+                                                             y: CGFloat(contactNormalBuffer[1]),
+                                                             z: CGFloat(contactNormalBuffer[2]))
                             let cp = collisionNormal.cross(SCNVector3Make(0, 0, 1))
                             let cpLen = cp.length
-                            angle[0] = asin(Float(cpLen))
+                            angleBuffer[0] = asin(Float(cpLen))
 
-                            axis[0] = Float(cp.x) / Float(cpLen)
-                            axis[1] = Float(cp.y) / Float(cpLen)
-                            axis[2] = Float(cp.z) / Float(cpLen)
+                            rotationAxisBuffer[0] = Float(cp.x) / Float(cpLen)
+                            rotationAxisBuffer[1] = Float(cp.y) / Float(cpLen)
+                            rotationAxisBuffer[2] = Float(cp.z) / Float(cpLen)
                             // kill the angular rotation
-                            let rawPtr2 = data[2] + dataStride[2] * Int((indices?[i])!)
-                            let angVel = rawPtr2.assumingMemoryBound(to: Float.self)
-                            angVel[0] = 0
+                            let rawPtr2 = data[2] + dataStride[2] * Int(indices![i])
+                            let angVelPtr = rawPtr2.bindMemory(to: Float.self, capacity: dataStride[2])
+                            let angularVelocityBuffer = UnsafeMutableBufferPointer(start: angVelPtr, count: dataStride[2])
 
-                            if (colNrm[1] > 0.4) {
-                                let rawPtr = data[3] + dataStride[3] * Int((indices?[i])!)
-                                let vel = rawPtr.bindMemory(to: Float.self, capacity: 3)
-                                vel[0] = 0
-                                vel[1] = 0
-                                vel[2] = 0
+                            angularVelocityBuffer[0] = 0
+
+                            if (contactNormalBuffer[1] > 0.4) {
+                                let rawPtr = data[3] + dataStride[3] * Int(indices![i])
+                                let velocityPointer = rawPtr.bindMemory(to: Float.self, capacity: dataStride[3])
+                                let velocityBuffer = UnsafeMutableBufferPointer(start: velocityPointer, count: dataStride[3])
+                                velocityBuffer[0] = 0
+                                velocityBuffer[1] = 0
+                                velocityBuffer[2] = 0
                             }
                         }
                     })
@@ -439,6 +452,7 @@ class AAPLSlideParticles: APPLSlide {
                     particleHolder?.position = SCNVector3Make(0, 15, CGFloat(HOLE_Z))
                 }
             }
+
         case ParticleSteps.emitterCube.rawValue:
             particleHolder?.removeAllParticleSystems()
             self.textManager.flipOutText(ofTextType: .bullet)
@@ -462,8 +476,10 @@ class AAPLSlideParticles: APPLSlide {
             bokeh = ps
 
             node.addParticleSystem(ps!)
+
         case ParticleSteps.emitterSphere.rawValue:
             bokeh?.emitterShape = SCNSphere(radius: 5)
+ 
         case ParticleSteps.emitterTorus.rawValue:
             bokeh?.emitterShape = SCNTorus(ringRadius: 5,
                                            pipeRadius: 1)
